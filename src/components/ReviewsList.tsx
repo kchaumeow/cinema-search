@@ -7,47 +7,38 @@ import { useEffect } from "react";
 import Error from "./Error";
 import EmptyState from "./EmptyState";
 import Loader from "./Loader";
+import { MediaType } from "../types";
 
-export default function ReviewList({ id }: { id: string }) {
-  const { page, limit, setPage, setLimit } = usePagination("reviews");
-  const [
-    trigger,
-    {
-      data: reviews,
-      isLoading: reviewsLoading,
-      isError: reviewsError,
-      isFetching: reviewsFetching,
-      isSuccess: reviewsSuccess,
-      error,
-    },
-    lastPromiseInfo,
-  ] = useLazyGetReviewsQuery();
+type ReviewListProps = {
+  id: string;
+  mediaType: MediaType;
+};
+
+export default function ReviewList({ id, mediaType }: ReviewListProps) {
+  const { page, setPage } = usePagination("reviews");
+  const [trigger, { data: reviews, isLoading, isFetching, isError, error }] =
+    useLazyGetReviewsQuery();
+
   useEffect(() => {
-    const request = trigger({ movieId: id, page, limit });
+    const request = trigger({ mediaType, id, page });
     return () => request.abort();
-  }, [id, page, limit]);
+  }, [mediaType, id, page]);
 
-  if (reviewsError) return <Error error={error} />;
+  if (isError) return <Error error={error} />;
 
-  if (reviewsLoading || reviewsFetching) return <Loader />;
+  if (isLoading || isFetching) return <Loader />;
 
-  if (!reviews || !reviews.docs.length)
+  if (!reviews || !reviews.items.length)
     return <EmptyState>No reviews yet</EmptyState>;
 
   return (
     <Flex direction="column" gap={6} w="100%" maxW="800px" mx="auto">
       <Stack spacing={3}>
-        {reviews.docs.map((review) => (
+        {reviews.items.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
       </Stack>
-      <Pagination
-        page={+page}
-        maxPage={reviews.pages}
-        setPage={setPage}
-        limit={limit}
-        setLimit={setLimit}
-      />
+      <Pagination page={page} maxPage={reviews.totalPages} setPage={setPage} />
     </Flex>
   );
 }

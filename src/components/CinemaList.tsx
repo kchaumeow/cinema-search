@@ -3,8 +3,16 @@ import CinemaCard from "./CinemaCard";
 import EmptyState from "./EmptyState";
 import { Cinema } from "../types";
 
-export default function CinemaList({ cinemas }: { cinemas: Cinema[] }) {
-  if (!cinemas.length) return <EmptyState>Nothing matched your search</EmptyState>;
+type CinemaListProps = {
+  cinemas: Cinema[];
+  empty?: string;
+};
+
+export default function CinemaList({
+  cinemas,
+  empty = "Nothing matched your search",
+}: CinemaListProps) {
+  if (!cinemas.length) return <EmptyState>{empty}</EmptyState>;
   return (
     <Grid
       templateColumns="repeat(auto-fill, minmax(180px, 1fr))"
@@ -12,7 +20,7 @@ export default function CinemaList({ cinemas }: { cinemas: Cinema[] }) {
       w="100%"
     >
       {cinemas.map((cinema) => (
-        <CinemaCard key={cinema.id} cinema={cinema} />
+        <CinemaCard key={`${cinema.mediaType}-${cinema.id}`} cinema={cinema} />
       ))}
     </Grid>
   );

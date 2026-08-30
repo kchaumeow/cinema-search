@@ -5,27 +5,33 @@ import { describe, expect, it } from "vitest";
 import "@testing-library/jest-dom/vitest";
 
 describe("ActorCard", () => {
-  const mockActor = {
+  const mockActor: Person = {
+    id: 1,
     name: "Test Actor",
-    photo: "test.jpg",
-    profession: "Actor",
-  } as Person;
+    character: "Test Character",
+    photoUrl: "https://image.tmdb.org/t/p/w185/test.jpg",
+  };
 
   it("renders actor name", () => {
     render(<ActorCard actor={mockActor} />);
-    const actorName = screen.getByText(/Test Actor/i);
-    expect(actorName).toBeInTheDocument();
+    expect(screen.getByText("Test Actor")).toBeInTheDocument();
   });
 
-  it("renders actor profession", () => {
+  it("renders the character played", () => {
     render(<ActorCard actor={mockActor} />);
-    const actorProfession = screen.getByText(/Actor/i);
-    expect(actorProfession).toBeInTheDocument();
+    expect(screen.getByText("Test Character")).toBeInTheDocument();
+  });
+
+  it("falls back to a dash when the character is unknown", () => {
+    render(<ActorCard actor={{ ...mockActor, character: "" }} />);
+    expect(screen.getByText("—")).toBeInTheDocument();
   });
 
   it("renders actor image", () => {
     render(<ActorCard actor={mockActor} />);
-    const actorImage = screen.getByAltText(/Test Actor/i);
-    expect(actorImage).toHaveAttribute("src", "test.jpg");
+    expect(screen.getByAltText("Test Actor")).toHaveAttribute(
+      "src",
+      "https://image.tmdb.org/t/p/w185/test.jpg",
+    );
   });
 });

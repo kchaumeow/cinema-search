@@ -13,7 +13,7 @@ export default function ActorCard({ actor }: { actor: Person }) {
     >
       <AspectRatio ratio={3 / 4}>
         <Image
-          src={actor.photo}
+          src={actor.photoUrl ?? undefined}
           alt={actor.name}
           objectFit="cover"
           bg="ink.raised"
@@ -24,7 +24,7 @@ export default function ActorCard({ actor }: { actor: Person }) {
           {actor.name}
         </Text>
         <Text fontSize="xs" color="ink.muted" noOfLines={1}>
-          {actor.profession.slice(0, -1)}
+          {actor.character || "—"}
         </Text>
       </Box>
     </Box>

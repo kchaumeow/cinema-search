@@ -3,15 +3,13 @@ import { useCallback } from "react";
 
 export type UsePaginationResult = {
   page: number;
-  limit: string;
   setPage: (page: number) => void;
-  setLimit: (limit: string) => void;
 };
 
+// TMDB serves a fixed 20 results per page, so there is no page size to pick.
 export function usePagination(prefix: string): UsePaginationResult {
   const [searchParams, setSearchParams] = useSearchParams();
   const page: number = parseInt(searchParams.get(prefix + "page") || "1");
-  const limit: string = searchParams.get(prefix + "limit") || "10";
   const setPage = useCallback(
     (page: number) => {
       const newSearchParams = new URLSearchParams(searchParams);
@@ -20,14 +18,6 @@ export function usePagination(prefix: string): UsePaginationResult {
     },
     [setSearchParams],
   );
-  const setLimit = useCallback(
-    (limit: string) => {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set(prefix + "limit", limit);
-      setSearchParams(newSearchParams);
-    },
-    [setSearchParams],
-  );
 
-  return { page, limit, setPage, setLimit };
+  return { page, setPage };
 }

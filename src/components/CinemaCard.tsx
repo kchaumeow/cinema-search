@@ -4,7 +4,7 @@ import { Cinema } from "../types";
 
 export default function CinemaCard({ cinema }: { cinema: Cinema }) {
   return (
-    <Link to={`/cinemas/${cinema.id}`}>
+    <Link to={`/cinemas/${cinema.mediaType}/${cinema.id}`}>
       <Box
         bg="ink.surface"
         borderWidth="1px"
@@ -16,7 +16,7 @@ export default function CinemaCard({ cinema }: { cinema: Cinema }) {
       >
         <AspectRatio ratio={2 / 3}>
           <Image
-            src={cinema.poster?.url ?? undefined}
+            src={cinema.posterUrl ?? undefined}
             alt={cinema.name}
             objectFit="cover"
             bg="ink.raised"
@@ -29,10 +29,10 @@ export default function CinemaCard({ cinema }: { cinema: Cinema }) {
           <Text
             fontSize="sm"
             fontWeight={600}
-            color={cinema.rating?.kp ? "brand.300" : "ink.muted"}
+            color={cinema.rating ? "brand.300" : "ink.muted"}
             flexShrink={0}
           >
-            {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
+            {cinema.rating ? cinema.rating.toFixed(1) : "—"}
           </Text>
         </Flex>
       </Box>

@@ -5,6 +5,7 @@ import {
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -34,7 +35,14 @@ export default function EpisodesTable({ episodes }: { episodes: Episode[] }) {
             {episodes.map((episode) => (
               <Tr key={episode.number}>
                 <Td color="ink.muted">{episode.number}</Td>
-                <Td whiteSpace="normal">{episode.description || "—"}</Td>
+                <Td whiteSpace="normal">
+                  <Text fontWeight={500}>{episode.name}</Text>
+                  {episode.overview && (
+                    <Text color="ink.muted" fontSize="xs" noOfLines={2}>
+                      {episode.overview}
+                    </Text>
+                  )}
+                </Td>
                 <Td color="ink.muted">
                   {episode.airDate
                     ? new Date(episode.airDate).toLocaleDateString("en-GB", {

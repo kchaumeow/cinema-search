@@ -1,90 +1,60 @@
+export type MediaType = "movie" | "tv";
+
 export interface Cinema {
-  name: string;
   id: number;
-  rating?: {
-    kp: number | null;
-    imdb: number | null;
-    filmCritics: number | null;
-    russianFilmCritics: number | null;
-  };
-  poster?: {
-    url: string | null;
-    previewUrl: string | null;
-  };
-  logo?: {
-    url: string | null;
-  };
+  mediaType: MediaType;
+  name: string;
+  posterUrl: string | null;
+  rating: number | null;
+  year: string | null;
 }
 
 export interface CinemaDetails extends Cinema {
-  type?: string;
-  description: string | null;
-  year?: number;
-  genres?: {
-    name: string;
-  }[];
-  persons?: Person[];
-  networks: null | [];
-  similarMovies?: SimilarMovie[];
+  overview: string;
+  genres: string[];
+  cast: Person[];
+  similar: Cinema[];
+  posters: string[];
+  seasons: SeasonSummary[];
 }
 
 export type Person = {
   id: number;
-  photo: string;
   name: string;
-  description: string;
-  profession: string;
+  character: string;
+  photoUrl: string | null;
 };
 
-export type Field = {
+export type SeasonSummary = {
+  seasonNumber: number;
   name: string;
-  slug: string;
-};
-
-export type SimilarMovie = {
-  id: number;
-  name: string;
-  enName: string | null;
-  alternativeName: string | null;
-  type: string;
-  poster: {
-    url: string;
-    previewUrl: string;
-  };
-};
-
-export type Review = {
-  id: number;
-  movieId: number;
-  title: string;
-  type: string;
-  review: string;
-  date: string;
-  author: string;
-  authorId: string;
-  userRating: number;
-  updatedAt: string;
-  createdAt: string;
-};
-
-export type Season = {
-  movieId: number;
-  number: number;
-  airDate: string;
-  createdAt: string;
-  enName: string;
-  episodes: Episode[];
+  episodeCount: number;
 };
 
 export type Episode = {
   number: number;
   name: string;
-  enName: string;
-  airDate: string;
-  description: string | null;
+  overview: string;
+  airDate: string | null;
 };
 
-export const colors: Map<string, string> = new Map();
-colors.set("Негативный", "red");
-colors.set("Нейтральный", "yellow");
-colors.set("Позитивный", "green");
+export type Review = {
+  id: string;
+  author: string;
+  content: string;
+  updatedAt: string;
+  rating: number | null;
+};
+
+// Genre and country selects both render {id, name}; the id is what discover
+// filters expect (a numeric genre id, an ISO 3166-1 country code).
+export type Field = {
+  id: string;
+  name: string;
+};
+
+export type Paginated<T> = {
+  items: T[];
+  page: number;
+  totalPages: number;
+};

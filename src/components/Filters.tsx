@@ -1,24 +1,26 @@
 import { Button, Flex, IconButton, Input, Select } from "@chakra-ui/react";
 import { useFilters } from "../hooks/useFilters";
-import { Field } from "../types";
+import { Field, MediaType } from "../types";
 import { Search2Icon } from "@chakra-ui/icons";
 
 const ratings = [
   { label: "18+", value: "18" },
-  { label: "16+", value: "16-17" },
-  { label: "12+", value: "12-15" },
-  { label: "6+", value: "6-11" },
-  { label: "0+", value: "0-5" },
+  { label: "16+", value: "16" },
+  { label: "12+", value: "12" },
+  { label: "6+", value: "6" },
+  { label: "0+", value: "0" },
 ];
 
 type FiltersProps = {
   genres: Field[];
   countries: Field[];
+  mediaType: MediaType;
   onClickSearch: () => void;
 };
 export default function Filters({
   genres,
   countries,
+  mediaType,
   onClickSearch,
 }: FiltersProps) {
   const { filters, setAllFilters, resetFilters } = useFilters();
@@ -36,7 +38,7 @@ export default function Filters({
       >
         <option value="">Genre</option>
         {genres.map((genre) => (
-          <option key={genre.name} value={genre.name}>
+          <option key={genre.id} value={genre.id}>
             {genre.name}
           </option>
         ))}
@@ -51,26 +53,29 @@ export default function Filters({
       >
         <option value="">Country</option>
         {countries.map((country) => (
-          <option key={country.name} value={country.name}>
+          <option key={country.id} value={country.id}>
             {country.name}
           </option>
         ))}
       </Select>
-      <Select
-        size="sm"
-        w="44"
-        value={ageRating}
-        onChange={(e) =>
-          setAllFilters({ country, genre, year, ageRating: e.target.value })
-        }
-      >
-        <option value="0-18">Age rating</option>
-        {ratings.map((rating) => (
-          <option key={rating.value} value={rating.value}>
-            {rating.label}
-          </option>
-        ))}
-      </Select>
+      {/* Discover only filters certifications for films. */}
+      {mediaType === "movie" && (
+        <Select
+          size="sm"
+          w="44"
+          value={ageRating}
+          onChange={(e) =>
+            setAllFilters({ country, genre, year, ageRating: e.target.value })
+          }
+        >
+          <option value="">Age rating</option>
+          {ratings.map((rating) => (
+            <option key={rating.value} value={rating.value}>
+              {rating.label}
+            </option>
+          ))}
+        </Select>
+      )}
       <Input
         size="sm"
         w="32"

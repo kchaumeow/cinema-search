@@ -28,10 +28,12 @@ function describe(error: unknown): { status?: string; message?: string } {
   return { status: name, message };
 }
 
+// TMDB names the field status_message; keep message too for anything else.
 function apiMessage(data: unknown): string | undefined {
-  if (typeof data === "object" && data !== null && "message" in data) {
-    const { message } = data as { message: unknown };
-    if (typeof message === "string") return message;
+  if (typeof data !== "object" || data === null) return undefined;
+  const body = data as { status_message?: unknown; message?: unknown };
+  for (const value of [body.status_message, body.message]) {
+    if (typeof value === "string") return value;
   }
   return undefined;
 }

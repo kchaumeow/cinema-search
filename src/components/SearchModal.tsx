@@ -15,6 +15,7 @@ import CinemaList from "./CinemaList";
 import Pagination from "./Pagination";
 import EmptyState from "./EmptyState";
 import Loader from "./Loader";
+import Error from "./Error";
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../features/store";
@@ -35,16 +36,17 @@ export default function SearchModal() {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 1000);
 
-  const [trigger, { isLoading, isFetching, data: cinemas }, lastPromiseInfo] =
+  const [trigger, { isLoading, isFetching, isError, error, data: cinemas }] =
     useLazyGetCinemaByNameQuery();
 
-  const { page, limit, setPage, setLimit } = usePagination("search");
+  const { page, setPage } = usePagination("search");
 
   useEffect(() => {
+    if (!debouncedQuery) return;
     dispatch(add(debouncedQuery));
-    const request = trigger({ page, limit, query: debouncedQuery });
+    const request = trigger({ page, query: debouncedQuery });
     return () => request.abort();
-  }, [debouncedQuery, page, limit]);
+  }, [debouncedQuery, page]);
   const searchHistory = useSelector(selectHistory);
   return (
     <>
@@ -95,19 +97,21 @@ export default function SearchModal() {
 
             <Flex direction="column" gap={8} mt={8}>
               {!query ? (
-                <EmptyState>Start typing a film title</EmptyState>
+                <EmptyState>Start typing a film or series title</EmptyState>
+              ) : isError ? (
+                <Error error={error} />
               ) : isLoading || isFetching || !cinemas ? (
                 <Loader />
               ) : (
                 <>
-                  <CinemaList cinemas={cinemas.docs} />
-                  <Pagination
-                    page={page}
-                    limit={limit}
-                    setPage={setPage}
-                    setLimit={setLimit}
-                    maxPage={cinemas.pages}
-                  />
+                  <CinemaList cinemas={cinemas.items} />
+                  {cinemas.items.length > 0 && (
+                    <Pagination
+                      page={page}
+                      setPage={setPage}
+                      maxPage={cinemas.totalPages}
+                    />
+                  )}
                 </>
               )}
             </Flex>

@@ -10,15 +10,15 @@ import {
 } from "@chakra-ui/react";
 import Posters from "../components/Posters";
 import ActorsList from "../components/ActorsList";
-import CinemaSlider from "../components/CinemaSlider";
+import CinemaList from "../components/CinemaList";
 import ReviewList from "../components/ReviewsList";
-import SeasonsList from "../components/SeasonsList";
+import Seasons from "../components/Seasons";
 import { useLazyGetCinemaByIdQuery } from "../features/api/cinemasSlice";
 import { useEffect } from "react";
 import Error from "../components/Error";
 import Loader from "../components/Loader";
-
-const series = ["cartoon", "tv-series", "anime", "animated-series"];
+import NotFound from "./NotFound";
+import { MediaType } from "../types";
 
 function Section({
   title,
@@ -38,27 +38,23 @@ function Section({
 }
 
 export default function Cinema() {
-  const { id } = useParams();
-  const [
-    trigger,
-    {
-      data: cinema,
-      isLoading,
-      isError,
-      isFetching,
-      isSuccess,
-      error: cinemaError,
-    },
-    lastPromiseInfo,
-  ] = useLazyGetCinemaByIdQuery();
+  const { id, mediaType } = useParams();
+  const [trigger, { data: cinema, isLoading, isError, isFetching, error }] =
+    useLazyGetCinemaByIdQuery();
+
+  const isMediaType = mediaType === "movie" || mediaType === "tv";
+
   useEffect(() => {
-    const request = trigger(id!);
+    if (!isMediaType) return;
+    const request = trigger({ mediaType: mediaType as MediaType, id: id! });
     return () => request.abort();
-  }, [id]);
+  }, [mediaType, id]);
 
-  if (isError) return <Error error={cinemaError} />;
+  if (!isMediaType) return <NotFound />;
 
-  if (isLoading || isFetching || cinemaError || !cinema) return <Loader />;
+  if (isError) return <Error error={error} />;
+
+  if (isLoading || isFetching || !cinema) return <Loader />;
 
   return (
     <Flex direction="column" gap={16}>
@@ -66,7 +62,7 @@ export default function Cinema() {
         <Box w={{ base: "100%", md: "260px" }} flexShrink={0}>
           <AspectRatio ratio={2 / 3}>
             <Image
-              src={cinema.poster?.url ?? undefined}
+              src={cinema.posterUrl ?? undefined}
               alt={cinema.name}
               objectFit="cover"
               bg="ink.raised"
@@ -75,49 +71,41 @@ export default function Cinema() {
           </AspectRatio>
         </Box>
         <Stack spacing={4} pt={2}>
-          {cinema.logo?.url ? (
-            <Image
-              src={cinema.logo.url}
-              alt={cinema.name}
-              maxW="280px"
-              h="80px"
-              objectFit="contain"
-              objectPosition="left"
-            />
-          ) : (
-            <Heading size="xl">{cinema.name}</Heading>
-          )}
-          <Flex gap={2} align="baseline" fontSize="sm">
-            <Text color="ink.muted">KP</Text>
+          <Heading size="xl">{cinema.name}</Heading>
+          <Flex gap={3} align="baseline" fontSize="sm" flexWrap="wrap">
             <Text color="brand.300" fontWeight={600} fontSize="md">
-              {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
+              {cinema.rating ? cinema.rating.toFixed(1) : "—"}
             </Text>
+            {cinema.year && <Text color="ink.muted">{cinema.year}</Text>}
+            {cinema.genres.length > 0 && (
+              <Text color="ink.muted">{cinema.genres.join(", ")}</Text>
+            )}
           </Flex>
           <Text color="ink.text" fontSize="sm" lineHeight="tall" maxW="65ch">
-            {cinema.description}
+            {cinema.overview}
           </Text>
         </Stack>
       </Flex>
 
       <Section title="Posters">
-        <Posters id={cinema.id.toString()} />
+        <Posters posters={cinema.posters} />
       </Section>
 
       <Section title="Cast">
-        <ActorsList actors={cinema.persons ?? []} />
+        <ActorsList actors={cinema.cast} />
       </Section>
 
       <Section title="Similar titles">
-        <CinemaSlider cinemas={cinema.similarMovies ?? []} />
+        <CinemaList cinemas={cinema.similar} empty="No similar titles" />
       </Section>
 
       <Section title="Reviews">
-        <ReviewList id={id!} />
+        <ReviewList id={id!} mediaType={cinema.mediaType} />
       </Section>
 
-      {!!cinema.type && series.includes(cinema.type) && (
+      {cinema.mediaType === "tv" && (
         <Section title="Seasons and episodes">
-          <SeasonsList movieId={id!} />
+          <Seasons id={id!} seasons={cinema.seasons} />
         </Section>
       )}
     </Flex>

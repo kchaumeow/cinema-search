@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
+import { MediaType } from "../types";
 
 const filterOptions = ["genre", "country", "year", "ageRating"] as const;
 type FilterOption = (typeof filterOptions)[number];
@@ -47,4 +48,26 @@ export function useFilters(): UseFiltersResult {
     setAllFilters,
     resetFilters,
   };
+}
+
+// Genre ids and certifications are not shared between films and series, so
+// switching media type clears the filters that would no longer resolve.
+export function useMediaType(): [MediaType, (next: MediaType) => void] {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const mediaType: MediaType =
+    searchParams.get("media") === "tv" ? "tv" : "movie";
+
+  const setMediaType = useCallback(
+    (next: MediaType) => {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("media", next);
+      newSearchParams.delete("genre");
+      newSearchParams.delete("ageRating");
+      newSearchParams.delete("homepage");
+      setSearchParams(newSearchParams);
+    },
+    [searchParams, setSearchParams],
+  );
+
+  return [mediaType, setMediaType];
 }

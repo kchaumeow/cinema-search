@@ -1,16 +1,10 @@
-import { Button, Flex, IconButton, Select, Text } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { UsePaginationResult } from "../hooks/usePagination";
 
 type PaginationProps = UsePaginationResult & { maxPage: number };
 
-export default function Pagination({
-  limit,
-  page,
-  setPage,
-  maxPage,
-  setLimit,
-}: PaginationProps) {
+export default function Pagination({ page, setPage, maxPage }: PaginationProps) {
   const buttons = [page - 1, page, page + 1];
   return (
     <Flex align="center" gap={2} flexWrap="wrap" justify="center">
@@ -29,7 +23,7 @@ export default function Pagination({
           size="sm"
           minW={9}
           isDisabled={page === button}
-          display={button && button < maxPage ? "block" : "none"}
+          display={button >= 1 && button <= maxPage ? "block" : "none"}
           onClick={() => setPage(button)}
         >
           {button}
@@ -46,17 +40,6 @@ export default function Pagination({
       <Text color="ink.muted" fontSize="sm" px={2}>
         of {maxPage}
       </Text>
-      <Select
-        w="20"
-        size="sm"
-        borderRadius="lg"
-        defaultValue={limit}
-        onChange={(e) => setLimit(e.target.value)}
-      >
-        <option value="5">5</option>
-        <option value="7">7</option>
-        <option value="10">10</option>
-      </Select>
     </Flex>
   );
 }

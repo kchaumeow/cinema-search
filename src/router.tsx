@@ -16,16 +16,16 @@ export const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Cinema />,
-        path: "/cinemas/:id",
-      },
-      {
         element: (
           <Protected>
             <Random />
           </Protected>
         ),
         path: "/cinemas/random",
+      },
+      {
+        element: <Cinema />,
+        path: "/cinemas/:mediaType/:id",
       },
       {
         element: <NotFound />,
