@@ -1,5 +1,5 @@
 import { Button, Flex, IconButton, Input, Select } from "@chakra-ui/react";
-import { useFilters } from "../hooks/useFilters";
+import { Filters as FilterValues, useFilters } from "../hooks/useFilters";
 import { Field, MediaType } from "../types";
 import { Search2Icon } from "@chakra-ui/icons";
 
@@ -15,7 +15,7 @@ type FiltersProps = {
   genres: Field[];
   countries: Field[];
   mediaType: MediaType;
-  onClickSearch: () => void;
+  onClickSearch: (override?: FilterValues) => void;
 };
 export default function Filters({
   genres,
@@ -91,9 +91,13 @@ export default function Filters({
         aria-label="Search"
         icon={<Search2Icon />}
         size="sm"
-        onClick={onClickSearch}
+        onClick={() => onClickSearch()}
       />
-      <Button variant="ghost" size="sm" onClick={resetFilters}>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onClickSearch(resetFilters())}
+      >
         Reset
       </Button>
     </Flex>

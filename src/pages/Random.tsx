@@ -20,8 +20,8 @@ export default function Random() {
     { data: cinema, isLoading, isError, isFetching, error: cinemaError },
   ] = useLazyGetRandomCinemaQuery();
 
-  const searchRandomCinema = () => {
-    currReq.current = trigger({ mediaType, filters });
+  const searchRandomCinema = (override?: typeof filters) => {
+    currReq.current = trigger({ mediaType, filters: override ?? filters });
   };
 
   useEffect(() => {

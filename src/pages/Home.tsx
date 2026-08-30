@@ -22,8 +22,8 @@ export default function Home() {
     { data: cinemas, isLoading, isError, isFetching, error: cinemaError },
   ] = useLazyGetAllCinemasQuery();
 
-  const search = () => {
-    currReq.current = trigger({ mediaType, page, filters });
+  const search = (override?: typeof filters) => {
+    currReq.current = trigger({ mediaType, page, filters: override ?? filters });
   };
 
   useEffect(() => {

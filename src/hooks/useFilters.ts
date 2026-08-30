@@ -4,12 +4,22 @@ import { MediaType } from "../types";
 
 const filterOptions = ["genre", "country", "year", "ageRating"] as const;
 type FilterOption = (typeof filterOptions)[number];
-type Filters = Record<FilterOption, string>;
+export type Filters = Record<FilterOption, string>;
+
+const emptyFilters: Filters = {
+  genre: "",
+  country: "",
+  year: "",
+  ageRating: "",
+};
 
 export type UseFiltersResult = {
   filters: Filters;
   setAllFilters: (newFilters: Filters) => void;
-  resetFilters: () => void;
+  // Returns the cleared filters: the caller needs them to re-run the search
+  // straight away, since its own `filters` still holds the pre-reset values
+  // until the search params land and the component re-renders.
+  resetFilters: () => Filters;
 };
 
 export function useFilters(): UseFiltersResult {
@@ -35,13 +45,9 @@ export function useFilters(): UseFiltersResult {
   );
 
   const resetFilters = useCallback(() => {
-    setAllFilters({
-      genre: "",
-      country: "",
-      year: "",
-      ageRating: "",
-    });
-  }, []);
+    setAllFilters(emptyFilters);
+    return emptyFilters;
+  }, [setAllFilters]);
 
   return {
     filters: { genre, country, year, ageRating },
