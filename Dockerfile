@@ -1,5 +1,5 @@
 #Stage 1
-FROM node:17-alpine as builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 ARG TOKEN
 ENV TOKEN=$TOKEN
