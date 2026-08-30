@@ -32,7 +32,7 @@ export default function ReviewList({ id, mediaType }: ReviewListProps) {
     return <EmptyState>No reviews yet</EmptyState>;
 
   return (
-    <Flex direction="column" gap={6} w="100%" maxW="800px" mx="auto">
+    <Flex direction="column" gap={6} w="100%" maxW="800px">
       <Stack spacing={3}>
         {reviews.items.map((review) => (
           <ReviewCard key={review.id} review={review} />

@@ -17,15 +17,15 @@ export default function ActorsList({ actors }: { actors: Person[] }) {
   );
 
   return (
-    <Flex direction="column" gap={5} align="center">
-      <Flex gap={4} flexWrap="wrap" justify="center">
+    <Flex direction="column" gap={5} align="flex-start">
+      <Flex gap={4} flexWrap="wrap">
         {actors
           .slice((currButton - 1) * PER_PAGE, currButton * PER_PAGE)
           .map((actor) => (
             <ActorCard key={actor.id} actor={actor} />
           ))}
       </Flex>
-      <Flex gap={2} flexWrap="wrap" justify="center">
+      <Flex gap={2} flexWrap="wrap">
         {buttons.map((button) => (
           <Button
             key={button}

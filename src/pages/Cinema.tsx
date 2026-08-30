@@ -28,10 +28,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Flex direction="column" gap={5} align="center" w="100%">
-      <Heading size="md" alignSelf="flex-start">
-        {title}
-      </Heading>
+    <Flex direction="column" gap={5} align="flex-start" w="100%">
+      <Heading size="md">{title}</Heading>
       {children}
     </Flex>
   );
@@ -105,7 +103,8 @@ export default function Cinema() {
 
       {cinema.mediaType === "tv" && (
         <Section title="Seasons and episodes">
-          <Seasons id={id!} seasons={cinema.seasons} />
+          {/* Keyed so the selected season resets when moving to another series. */}
+          <Seasons key={id} id={id!} seasons={cinema.seasons} />
         </Section>
       )}
     </Flex>

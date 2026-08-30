@@ -12,8 +12,14 @@ type SeasonsProps = {
   seasons: SeasonSummary[];
 };
 
+// Season 0 is TMDB's specials bucket — it can hold hundreds of clips, so it
+// stays selectable but never opens by default.
+const firstRegularSeason = (seasons: SeasonSummary[]) =>
+  (seasons.find((season) => season.seasonNumber >= 1) ?? seasons[0])
+    ?.seasonNumber ?? 1;
+
 export default function Seasons({ id, seasons }: SeasonsProps) {
-  const [season, setSeason] = useState(seasons[0]?.seasonNumber ?? 1);
+  const [season, setSeason] = useState(() => firstRegularSeason(seasons));
   const [trigger, { data: episodes, isLoading, isFetching, isError, error }] =
     useLazyGetSeasonQuery();
 
@@ -25,7 +31,7 @@ export default function Seasons({ id, seasons }: SeasonsProps) {
   if (!seasons.length) return <EmptyState>No seasons found</EmptyState>;
 
   return (
-    <Flex direction="column" align="center" gap={5} w="100%">
+    <Flex direction="column" align="flex-start" gap={5} w="100%">
       <Flex gap={3} align="center">
         <Text color="ink.muted" fontSize="sm">
           Season

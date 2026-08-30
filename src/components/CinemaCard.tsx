@@ -15,12 +15,16 @@ export default function CinemaCard({ cinema }: { cinema: Cinema }) {
         _hover={{ borderColor: "ink.borderHover", transform: "translateY(-4px)" }}
       >
         <AspectRatio ratio={2 / 3}>
-          <Image
-            src={cinema.posterUrl ?? undefined}
-            alt={cinema.name}
-            objectFit="cover"
-            bg="ink.raised"
-          />
+          {cinema.posterUrl ? (
+            <Image
+              src={cinema.posterUrl}
+              alt={cinema.name}
+              objectFit="cover"
+              bg="ink.raised"
+            />
+          ) : (
+            <Box bg="ink.raised" />
+          )}
         </AspectRatio>
         <Flex align="baseline" justify="space-between" gap={3} px={4} py={3}>
           <Text fontSize="sm" fontWeight={500} noOfLines={1}>

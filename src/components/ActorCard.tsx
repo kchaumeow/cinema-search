@@ -12,12 +12,16 @@ export default function ActorCard({ actor }: { actor: Person }) {
       overflow="hidden"
     >
       <AspectRatio ratio={3 / 4}>
-        <Image
-          src={actor.photoUrl ?? undefined}
-          alt={actor.name}
-          objectFit="cover"
-          bg="ink.raised"
-        />
+        {actor.photoUrl ? (
+          <Image
+            src={actor.photoUrl}
+            alt={actor.name}
+            objectFit="cover"
+            bg="ink.raised"
+          />
+        ) : (
+          <Box bg="ink.raised" />
+        )}
       </AspectRatio>
       <Box px={3} py={2.5}>
         <Text fontSize="sm" fontWeight={500} noOfLines={1}>

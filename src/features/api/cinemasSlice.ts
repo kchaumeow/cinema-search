@@ -116,7 +116,9 @@ type TmdbDetails = TmdbListItem & {
     }[];
   };
   images: { posters: { file_path: string }[] };
-  similar: TmdbPage;
+  // /similar matches on genres and keywords and returns near-noise;
+  // /recommendations is built from what people actually watch together.
+  recommendations: TmdbPage;
 };
 
 // TMDB hands out two credentials on the same settings page: a v3 API key,
@@ -174,7 +176,7 @@ export const cinemasApi = createApi({
         url: `/${mediaType}/${id}`,
         params: {
           language: "en-US",
-          append_to_response: "credits,images,similar",
+          append_to_response: "credits,images,recommendations",
         },
       }),
       transformResponse: (response: TmdbDetails, _meta, { mediaType }) => ({
@@ -189,7 +191,7 @@ export const cinemasApi = createApi({
             photoUrl: image(person.profile_path, "w185"),
           }),
         ),
-        similar: response.similar.results.map((item) =>
+        similar: response.recommendations.results.map((item) =>
           toCinema(item, mediaType),
         ),
         posters: response.images.posters
