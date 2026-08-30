@@ -10,13 +10,17 @@ export type UsePaginationResult = {
 export function usePagination(prefix: string): UsePaginationResult {
   const [searchParams, setSearchParams] = useSearchParams();
   const page: number = parseInt(searchParams.get(prefix + "page") || "1");
+  // Updates are functional so that several of them in one handler compose
+  // instead of overwriting each other with a stale copy of the params.
   const setPage = useCallback(
     (page: number) => {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set(prefix + "page", page.toString());
-      setSearchParams(newSearchParams);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set(prefix + "page", page.toString());
+        return next;
+      });
     },
-    [setSearchParams],
+    [prefix, setSearchParams],
   );
 
   return { page, setPage };

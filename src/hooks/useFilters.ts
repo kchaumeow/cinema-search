@@ -22,7 +22,12 @@ export type UseFiltersResult = {
   resetFilters: () => Filters;
 };
 
-export function useFilters(): UseFiltersResult {
+// Clearing the filters also sends the reader back to the first page, and both
+// have to happen in a single write: react-router hands a functional updater
+// the params as of the current render, so two calls in one handler each issue
+// their own navigation and the second overwrites the first.
+
+export function useFilters(pagePrefix?: string): UseFiltersResult {
   const [searchParams, setSearchParams] = useSearchParams();
   const genre = searchParams.get("genre") || "";
   const country = searchParams.get("country") || "";
@@ -31,23 +36,28 @@ export function useFilters(): UseFiltersResult {
 
   const setAllFilters = useCallback(
     (newFilters: Filters) => {
-      const newSearchParams = new URLSearchParams(searchParams);
-
-      for (const key of filterOptions) {
-        const value = newFilters[key];
-        if (value) newSearchParams.set(key, value);
-        else newSearchParams.delete(key);
-      }
-
-      setSearchParams(newSearchParams);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        for (const key of filterOptions) {
+          const value = newFilters[key];
+          if (value) next.set(key, value);
+          else next.delete(key);
+        }
+        return next;
+      });
     },
     [setSearchParams],
   );
 
   const resetFilters = useCallback(() => {
-    setAllFilters(emptyFilters);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      for (const key of filterOptions) next.delete(key);
+      if (pagePrefix) next.delete(pagePrefix + "page");
+      return next;
+    });
     return emptyFilters;
-  }, [setAllFilters]);
+  }, [pagePrefix, setSearchParams]);
 
   return {
     filters: { genre, country, year, ageRating },
@@ -64,15 +74,17 @@ export function useMediaType(): [MediaType, (next: MediaType) => void] {
     searchParams.get("media") === "tv" ? "tv" : "movie";
 
   const setMediaType = useCallback(
-    (next: MediaType) => {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("media", next);
-      newSearchParams.delete("genre");
-      newSearchParams.delete("ageRating");
-      newSearchParams.delete("homepage");
-      setSearchParams(newSearchParams);
+    (media: MediaType) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("media", media);
+        next.delete("genre");
+        next.delete("ageRating");
+        next.delete("homepage");
+        return next;
+      });
     },
-    [searchParams, setSearchParams],
+    [setSearchParams],
   );
 
   return [mediaType, setMediaType];

@@ -54,7 +54,8 @@ export default function Random() {
           genres={resultGenres.data}
           countries={resultCountries.data}
           mediaType={mediaType}
-          onClickSearch={searchRandomCinema}
+          onSearch={() => searchRandomCinema()}
+          onReset={searchRandomCinema}
         />
       )}
 

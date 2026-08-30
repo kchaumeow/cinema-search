@@ -22,15 +22,29 @@ export default function Home() {
     { data: cinemas, isLoading, isError, isFetching, error: cinemaError },
   ] = useLazyGetAllCinemasQuery();
 
-  const search = (override?: typeof filters) => {
+  const runQuery = (override?: typeof filters) => {
     currReq.current = trigger({ mediaType, page, filters: override ?? filters });
   };
 
   useEffect(() => {
-    search();
+    runQuery();
     return () => currReq.current?.abort();
     // Filters are applied by the search button, so they stay out of the deps.
   }, [mediaType, page]);
+
+  // A narrower filter usually has fewer pages, so applying one from page 7
+  // would land on an empty result. Both actions return to page one, and when
+  // that actually changes the page the effect above issues the request — so
+  // it is never sent twice.
+  const search = () => {
+    if (page !== 1) setPage(1);
+    else runQuery();
+  };
+
+  // resetFilters has already cleared the page param in the same write.
+  const reset = (cleared: typeof filters) => {
+    if (page === 1) runQuery(cleared);
+  };
 
   const { resultGenres, resultCountries } = useGenresAndCountries(mediaType);
 
@@ -67,7 +81,9 @@ export default function Home() {
           genres={resultGenres.data}
           countries={resultCountries.data}
           mediaType={mediaType}
-          onClickSearch={search}
+          pagePrefix="home"
+          onSearch={search}
+          onReset={reset}
         />
       )}
 

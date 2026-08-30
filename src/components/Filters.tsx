@@ -15,15 +15,22 @@ type FiltersProps = {
   genres: Field[];
   countries: Field[];
   mediaType: MediaType;
-  onClickSearch: (override?: FilterValues) => void;
+  // Which page param the reset should clear alongside the filters, if any.
+  pagePrefix?: string;
+  onSearch: () => void;
+  // Handed the cleared values, because the caller's own filters still hold the
+  // pre-reset ones until the search params land.
+  onReset: (cleared: FilterValues) => void;
 };
 export default function Filters({
   genres,
   countries,
   mediaType,
-  onClickSearch,
+  pagePrefix,
+  onSearch,
+  onReset,
 }: FiltersProps) {
-  const { filters, setAllFilters, resetFilters } = useFilters();
+  const { filters, setAllFilters, resetFilters } = useFilters(pagePrefix);
   const { genre, country, year, ageRating } = filters;
 
   return (
@@ -91,12 +98,12 @@ export default function Filters({
         aria-label="Search"
         icon={<Search2Icon />}
         size="sm"
-        onClick={() => onClickSearch()}
+        onClick={onSearch}
       />
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onClickSearch(resetFilters())}
+        onClick={() => onReset(resetFilters())}
       >
         Reset
       </Button>
