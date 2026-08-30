@@ -1,92 +1,96 @@
-# Веб-сайт с фильмами Cinema Poisk
+# Cinema Poisk
 
-## Установка зависимостей
+A film and series catalogue built on the [kinopoisk.dev](https://api.poiskkino.dev/documentation) API.
+
+## Getting an API token
+
+The API requires a key. Get one from the Telegram bot
+[@poiskkinodev_bot](https://t.me/poiskkinodev_bot) and pass it to every command
+below as the `TOKEN` environment variable.
+
+Note that the free demo tier only serves the first 10 pages of results and a
+page size of at most 10.
+
+## Install
 
 ```bash
-npm i 
-# Установка зависимостей
+npm i
 ```
 
-### Запуск dev
+### Run in development
 
 ```bash
-TOKEN=YOUR_TOKEN npm run dev 
-# Надо заменить YOUR_TOKEN на ваш токен для апи
-# Для windows испльзуется cross-env 
+TOKEN=YOUR_TOKEN npm run dev
+# on Windows the TOKEN prefix is handled by cross-env
 ```
 
-### Запуск prod
+### Run in production mode
 
 ```bash
-TOKEN=YOUR_TOKEN npm run start 
-# Надо заменить YOUR_TOKEN на ваш токен для апи
+TOKEN=YOUR_TOKEN npm run start
 ```
 
-### Запустить тесты
+The app is served at http://localhost:7070.
+
+### Run the tests
 
 ```bash
-npm test  # запуск тестов
+npm test
 ```
 
 ### Docker
 
 ```bash
-docker build --build-arg TOKEN=YOUR_TOKEN -t your_tag . 
-# Надо заменить YOUR_TOKEN и по желанию your_tag
+docker build --build-arg TOKEN=YOUR_TOKEN -t your_tag .
 ```
 
 ```bash
 docker run -it -p 7070:80 --rm your_tag
-# your_tag должен совпадать с тем, что сверху
+# your_tag must match the tag used in the build step
 ```
 
-## Реализовано
+## Features
 
-1. **Список всех фильмов**
-    - Отображение списка фильмов и сериалов
-    - Реализация пагинации
-    - Возможность выбора количества фильмов для отображения на странице (по умолчанию 10)
-    - Фильтрация выдачи (по году, стране и возрастному рейтингу)
-    - Поиск по названию фильма
-    - Переход на страницу фильма из выдачи
-    - *Дополнительно:*
-        - Обмен результатами выдачи с другими пользователями через копирование ссылки
-        - Сохранение истории поиска (последние 20 запросов)
-        - Suggest с предложениями из ранее введенных значений при вводе нового названия
-        - Фильтрация подсказок по вхождению
-        - Поиск с задержкой в 1 секунду после последнего введенного символа (debounce)
+1. **Catalogue**
+    - List of films and series
+    - Pagination
+    - Selectable page size (5, 7 or 10 — 10 by default)
+    - Filtering by genre, country, year and age rating
+    - Search by title
+    - Navigation from a result to its detail page
+    - *Extras:*
+        - Filters and page number live in the URL, so a result set can be shared by copying the link
+        - Search history (last 20 queries)
+        - Suggestions from previously entered queries while typing
+        - Suggestions filtered by substring match
+        - Search debounced by one second after the last keystroke
 
-2. **Страница отдельного фильма**
-    - Отображение информации о фильме или сериале:
-        - Название фильма/сериала
-        - Описание
-        - Рейтинг
-        - Список актеров (с пагинацией, если их больше 10)
-        - Список сезонов и серий (с пагинацией, если они подразумеваются)
-        - Отзывы пользователей (с пагинацией)
-        - Постеры в виде «карусели»
-    - Вывод списка похожих фильмов в виде «карусели»
-    - Отображение заглушки в случае отсутствия информации (например, «нет информации о ...»)
-    - Кнопка «назад», которая ведет на выдачу с сохранением фильтров и номера страницы
-    - *Дополнительно:*
-        - Реализация авторизации
-        - Страница с поиском рандомного фильма с фильтрами и кнопкой «Случайный фильм»
-3. **Технические детали**
-    - Запуск проекта в режиме разработчика: TOKEN=<your api token> npm run start; проект доступен по
-      ссылке http://localhost:7070
-    - Реализован адаптивный интерфейс для удобства работы как с мобильных, так и с десктопных устройств
-    - Использован React Router v6 для роутинга
-    - При переходах по ссылкам страница не перезагружается (SPA, без next.js)
-    - Использование TypeScript
-    - Наличие docker-файла для запуска
-    - Реализация возможности выполнения трех попыток повторного запроса при неудачном запросе
-    - Прерывание (отмена/прекращение) запросов, относящихся к старой странице, пр�� переходе со страницы на страницу
-    - Покрытие кода юнит-тестами
+2. **Detail page**
+    - Title or logo, description and rating
+    - Cast, paginated five at a time
+    - Seasons and episodes for series
+    - User reviews, paginated
+    - Posters in a carousel
+    - Similar titles as a grid
+    - Placeholder text wherever the API returns nothing
+    - Back button that returns to the results with filters and page number intact
+    - *Extras:*
+        - Sign-in flow
+        - Random title page with the same filters
 
-## Стек
+3. **Technical notes**
+    - Single-page app — navigation never reloads the page (no Next.js)
+    - React Router v6 for routing
+    - Responsive layout for both mobile and desktop
+    - Requests belonging to the previous page are aborted on navigation
+    - Written in TypeScript
+    - Dockerfile for containerised builds
+    - Unit tests
+
+## Stack
 
 + React
-+ TS
++ TypeScript
 + Vitest
 + React Router v6
 + Chakra UI + Choc UI
