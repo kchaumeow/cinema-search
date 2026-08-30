@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import AuthModal from "./AuthModal";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser } from "../features/userSlice";
+import Loader from "./Loader";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -61,7 +63,9 @@ export default function Layout() {
         </Flex>
       </Flex>
       <Box as="main" px={{ base: 4, md: 8 }} py={10} maxW="1400px" mx="auto">
-        <Outlet />
+        <Suspense fallback={<Loader />}>
+          <Outlet />
+        </Suspense>
       </Box>
     </Box>
   );

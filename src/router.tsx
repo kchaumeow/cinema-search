@@ -1,10 +1,15 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Cinema from "./pages/Cinema";
 import NotFound from "./pages/NotFound";
 import Protected from "./components/Protected";
-import Random from "./pages/Random";
+
+// Each page owns its heaviest dependencies (the carousel on the detail page,
+// the autocomplete behind search), so they load per route instead of shipping
+// in the initial bundle. Layout renders the Suspense boundary.
+const Home = lazy(() => import("./pages/Home"));
+const Cinema = lazy(() => import("./pages/Cinema"));
+const Random = lazy(() => import("./pages/Random"));
 
 export const router = createBrowserRouter([
   {
