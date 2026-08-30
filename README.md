@@ -1,4 +1,4 @@
-# Cinema Poisk
+# Cinema Search
 
 A film and series catalogue built on [The Movie Database](https://developer.themoviedb.org/docs) API.
 

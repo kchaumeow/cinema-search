@@ -36,7 +36,7 @@ export default function Layout() {
         )}
         <Link to="/">
           <Text fontWeight={600} fontSize="lg" letterSpacing="-0.02em">
-            Cinema Poisk
+            Cinema Search
           </Text>
         </Link>
         <Flex gap={2} align="center" ml="auto">
