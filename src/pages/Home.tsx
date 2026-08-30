@@ -1,5 +1,5 @@
 import CinemaList from "../components/CinemaList";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import { usePagination } from "../hooks/usePagination";
 import { useFilters } from "../hooks/useFilters";
 import Pagination from "../components/Pagination";
@@ -9,6 +9,7 @@ import { useGenresAndCountries } from "../hooks/useGenresAndCountries";
 import { useLazyGetAllCinemasQuery } from "../features/api/cinemasSlice";
 import { useEffect, useRef } from "react";
 import Error from "../components/Error";
+import Loader from "../components/Loader";
 import { QueryActionCreatorResult } from "@reduxjs/toolkit/query";
 
 export default function Home() {
@@ -42,20 +43,18 @@ export default function Home() {
     isFetching ||
     isLoading
   )
-    return (
-      <Spinner
-        thickness="10px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange.500"
-        marginTop="200px"
-        w={100}
-        h={100}
-      />
-    );
+    return <Loader />;
   return (
-    <Box display="flex" alignItems="center" flexDirection="column" gap={10}>
-      <SearchModal />
+    <Flex direction="column" gap={8}>
+      <Flex
+        align={{ base: "stretch", md: "center" }}
+        justify="space-between"
+        direction={{ base: "column", md: "row" }}
+        gap={4}
+      >
+        <Heading size="lg">Catalogue</Heading>
+        <SearchModal />
+      </Flex>
       {resultGenres.isSuccess && resultCountries.isSuccess && (
         <Filters
           genres={resultGenres.data}
@@ -64,7 +63,7 @@ export default function Home() {
         />
       )}
       <CinemaList cinemas={cinemas.docs} />
-      {cinemas.docs.length && (
+      {cinemas.docs.length > 0 && (
         <Pagination
           page={+page}
           maxPage={cinemas.pages}
@@ -73,6 +72,6 @@ export default function Home() {
           setLimit={setLimit}
         />
       )}
-    </Box>
+    </Flex>
   );
 }

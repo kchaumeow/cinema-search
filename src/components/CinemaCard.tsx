@@ -1,45 +1,41 @@
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Divider,
-  Image,
-  Text,
-} from "@chakra-ui/react";
+import { AspectRatio, Box, Flex, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Cinema } from "../types";
 
 export default function CinemaCard({ cinema }: { cinema: Cinema }) {
   return (
     <Link to={`/cinemas/${cinema.id}`}>
-      <Card
-        bg="#141414"
-        maxW="sm"
-        transition="transform .3s linear"
-        _hover={{
-          transform: "scale(1.1)",
-        }}
-        h="650px"
+      <Box
+        bg="ink.surface"
+        borderWidth="1px"
+        borderColor="ink.border"
+        borderRadius="xl"
+        overflow="hidden"
+        transition="border-color .2s ease, transform .2s ease"
+        _hover={{ borderColor: "ink.borderHover", transform: "translateY(-4px)" }}
       >
-        <CardBody h={573} w={384}>
+        <AspectRatio ratio={2 / 3}>
           <Image
             src={cinema.poster?.url ?? undefined}
             alt={cinema.name}
-            borderRadius="lg"
-            objectFit="contain"
-            color="orange.500"
+            objectFit="cover"
+            bg="ink.raised"
           />
-        </CardBody>
-        <Divider borderColor={"orange"} />
-        <CardFooter display="flex" justifyContent="space-between">
-          <Text color="white" as="b" fontSize="2xl" noOfLines={1} p={2}>
+        </AspectRatio>
+        <Flex align="baseline" justify="space-between" gap={3} px={4} py={3}>
+          <Text fontSize="sm" fontWeight={500} noOfLines={1}>
             {cinema.name}
           </Text>
-          <Text color="orange.400" as="b" fontSize="2xl" p={2}>
+          <Text
+            fontSize="sm"
+            fontWeight={600}
+            color={cinema.rating?.kp ? "brand.300" : "ink.muted"}
+            flexShrink={0}
+          >
             {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
           </Text>
-        </CardFooter>
-      </Card>
+        </Flex>
+      </Box>
     </Link>
   );
 }

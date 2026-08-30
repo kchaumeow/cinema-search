@@ -1,8 +1,10 @@
 import { useLazyGetCinemaPostersByIdQuery } from "../features/api/cinemasSlice";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { Heading, Image, Spinner } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 import "@splidejs/react-splide/css";
 import { useEffect } from "react";
+import EmptyState from "./EmptyState";
+import Loader from "./Loader";
 
 type CinemaPoster = {
   movieId: number;
@@ -33,44 +35,29 @@ export default function Posters({ id }: { id: string }) {
     return () => request.abort();
   }, []);
 
-  if (isLoading || isFetching || !posters)
-    return (
-      <Spinner
-        thickness="10px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange.500"
-        marginTop="200px"
-        w={100}
-        h={100}
-      />
-    );
-  if (!posters.docs.length)
-    return (
-      <Heading color="orange.500" mt={200}>
-        Постеры к фильму отсутствуют
-      </Heading>
-    );
+  if (isLoading || isFetching || !posters) return <Loader />;
+
+  if (!posters.docs.length) return <EmptyState>No posters available</EmptyState>;
+
   return (
-    <Splide
-      aria-label="My Favorite Images"
-      options={{
-        perPage: 1,
-        rewind: true,
-        width: 500,
-      }}
-    >
-      {posters.docs.map((poster: CinemaPoster) => (
-        <SplideSlide key={poster.url}>
-          <Image
-            src={poster.url}
-            alt="poster"
-            w={800}
-            h={400}
-            objectFit="contain"
-          />
-        </SplideSlide>
-      ))}
-    </Splide>
+    <Box w="100%" maxW="560px">
+      <Splide
+        aria-label="Posters"
+        options={{ perPage: 1, rewind: true, gap: "1rem" }}
+      >
+        {posters.docs.map((poster: CinemaPoster) => (
+          <SplideSlide key={poster.url}>
+            <Image
+              src={poster.url}
+              alt="Poster"
+              w="100%"
+              h="360px"
+              objectFit="contain"
+              borderRadius="lg"
+            />
+          </SplideSlide>
+        ))}
+      </Splide>
+    </Box>
   );
 }

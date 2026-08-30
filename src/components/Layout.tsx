@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import AuthModal from "./AuthModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,62 +11,56 @@ export default function Layout() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   return (
-    <Box h="100%" bg="black">
-      <Flex p={6} justifyContent="space-between">
+    <Box minH="100vh" bg="ink.bg">
+      <Flex
+        as="header"
+        position="sticky"
+        top={0}
+        zIndex="sticky"
+        align="center"
+        gap={4}
+        px={{ base: 4, md: 8 }}
+        py={4}
+        bg="ink.bg"
+        borderBottomWidth="1px"
+        borderColor="ink.border"
+      >
         {id && (
-          <Button
-            colorScheme="orange"
-            color="black"
+          <IconButton
+            aria-label="Go back"
+            icon={<ArrowBackIcon />}
             onClick={() => navigate(-1)}
-            variant="solid"
-            size="lg"
-          >
-            <ArrowBackIcon />
-          </Button>
+            variant="ghost"
+            size="sm"
+          />
         )}
-        <Link to={"/"}>
-          <Text
-            fontWeight={600}
-            fontSize="4xl"
-            color="orange.500"
-            textAlign="center"
-          >
-            Кинопоиск
+        <Link to="/">
+          <Text fontWeight={600} fontSize="lg" letterSpacing="-0.02em">
+            Cinema Poisk
           </Text>
         </Link>
-        {!user ? (
-          <AuthModal />
-        ) : (
-          <Flex gap={4} alignItems="center">
-            <Link to="/cinemas/random">
+        <Flex gap={2} align="center" ml="auto">
+          {!user ? (
+            <AuthModal />
+          ) : (
+            <>
+              <Link to="/cinemas/random">
+                <Button variant="ghost" size="sm">
+                  Random title
+                </Button>
+              </Link>
               <Button
-                variant="link"
-                color="white"
-                size="lg"
-                textDecoration="underline"
+                onClick={() => dispatch(setUser(null))}
+                variant="outline"
+                size="sm"
               >
-                Рандомный тайтл
+                Log out
               </Button>
-            </Link>
-            <Button
-              onClick={() => {
-                dispatch(setUser(null));
-              }}
-              colorScheme="orange"
-              size="lg"
-            >
-              Выход
-            </Button>
-          </Flex>
-        )}
+            </>
+          )}
+        </Flex>
       </Flex>
-      <Box
-        h="100%"
-        p={4}
-        alignItems="center"
-        justifyContent="center"
-        display="flex"
-      >
+      <Box as="main" px={{ base: 4, md: 8 }} py={10} maxW="1400px" mx="auto">
         <Outlet />
       </Box>
     </Box>

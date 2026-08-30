@@ -1,26 +1,32 @@
-import { Card, CardBody, CardFooter, Image, Text } from "@chakra-ui/react";
+import { AspectRatio, Box, Image, Text } from "@chakra-ui/react";
 import { Person } from "../types";
 
 export default function ActorCard({ actor }: { actor: Person }) {
   return (
-    <Card bg="#141414" maxW="sm" h="500px">
-      <CardBody h={400} w={300}>
+    <Box
+      w="160px"
+      bg="ink.surface"
+      borderWidth="1px"
+      borderColor="ink.border"
+      borderRadius="xl"
+      overflow="hidden"
+    >
+      <AspectRatio ratio={3 / 4}>
         <Image
           src={actor.photo}
           alt={actor.name}
-          borderRadius="lg"
-          w={300}
-          h={400}
+          objectFit="cover"
+          bg="ink.raised"
         />
-      </CardBody>
-      <CardFooter display="flex" justifyContent="space-between">
-        <Text color="white" as="b" fontSize="lg" noOfLines={1} p={2}>
+      </AspectRatio>
+      <Box px={3} py={2.5}>
+        <Text fontSize="sm" fontWeight={500} noOfLines={1}>
           {actor.name}
         </Text>
-        <Text color="orange.500" as="b" fontSize="lg" p={2}>
+        <Text fontSize="xs" color="ink.muted" noOfLines={1}>
           {actor.profession.slice(0, -1)}
         </Text>
-      </CardFooter>
-    </Card>
+      </Box>
+    </Box>
   );
 }

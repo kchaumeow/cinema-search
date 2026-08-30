@@ -1,10 +1,12 @@
-import { Box, Heading, Spinner, Stack } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
 import ReviewCard from "./ReviewCard";
 import { usePagination } from "../hooks/usePagination";
 import Pagination from "./Pagination";
 import { useLazyGetReviewsQuery } from "../features/api/cinemasSlice";
 import { useEffect } from "react";
 import Error from "./Error";
+import EmptyState from "./EmptyState";
+import Loader from "./Loader";
 
 export default function ReviewList({ id }: { id: string }) {
   const { page, limit, setPage, setLimit } = usePagination("reviews");
@@ -27,44 +29,25 @@ export default function ReviewList({ id }: { id: string }) {
 
   if (reviewsError) return <Error error={error} />;
 
-  if (reviewsLoading || reviewsFetching)
-    return (
-      <Spinner
-        thickness="10px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange.500"
-        w={100}
-        h={100}
-      />
-    );
+  if (reviewsLoading || reviewsFetching) return <Loader />;
+
   if (!reviews || !reviews.docs.length)
-    return (
-      <Heading color="orange.500" m={200}>
-        Нет отзывов
-      </Heading>
-    );
+    return <EmptyState>No reviews yet</EmptyState>;
+
   return (
-    <>
-      <Heading size="2xl" color="orange.500" pb={5} pt={100}>
-        Отзывы
-      </Heading>
-      <Stack spacing={4}>
-        <Stack spacing={4}>
-          {reviews.docs.map((review) => (
-            <Box key={review.id}>
-              <ReviewCard review={review} />
-            </Box>
-          ))}
-        </Stack>
-        <Pagination
-          page={+page}
-          maxPage={reviews.pages}
-          setPage={setPage}
-          limit={limit}
-          setLimit={setLimit}
-        />
+    <Flex direction="column" gap={6} w="100%" maxW="800px" mx="auto">
+      <Stack spacing={3}>
+        {reviews.docs.map((review) => (
+          <ReviewCard key={review.id} review={review} />
+        ))}
       </Stack>
-    </>
+      <Pagination
+        page={+page}
+        maxPage={reviews.pages}
+        setPage={setPage}
+        limit={limit}
+        setLimit={setLimit}
+      />
+    </Flex>
   );
 }

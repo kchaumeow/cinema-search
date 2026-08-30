@@ -1,4 +1,4 @@
-import { Button, Flex, Select, Text } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Select, Text } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { UsePaginationResult } from "../hooks/usePagination";
 
@@ -13,51 +13,49 @@ export default function Pagination({
 }: PaginationProps) {
   const buttons = [page - 1, page, page + 1];
   return (
-    <Flex alignItems="center" gap={5}>
-      <Button
-        colorScheme="orange"
-        variant="solid"
+    <Flex align="center" gap={2} flexWrap="wrap" justify="center">
+      <IconButton
+        aria-label="Previous page"
+        icon={<ArrowBackIcon />}
+        variant="outline"
+        size="sm"
         isDisabled={page === 1}
         onClick={() => setPage(page - 1)}
-      >
-        <ArrowBackIcon />
-      </Button>
-      {buttons.map((button) => {
-        return (
-          <Button
-            key={button}
-            colorScheme="orange"
-            variant={page === button ? "solid" : "outline"}
-            isDisabled={page === button}
-            display={button && button < maxPage ? "block" : "none"}
-            onClick={() => setPage(button)}
-          >
-            {button}
-          </Button>
-        );
-      })}
-      <Button
-        colorScheme="orange"
-        variant="solid"
+      />
+      {buttons.map((button) => (
+        <Button
+          key={button}
+          variant={page === button ? "solid" : "outline"}
+          size="sm"
+          minW={9}
+          isDisabled={page === button}
+          display={button && button < maxPage ? "block" : "none"}
+          onClick={() => setPage(button)}
+        >
+          {button}
+        </Button>
+      ))}
+      <IconButton
+        aria-label="Next page"
+        icon={<ArrowForwardIcon />}
+        variant="outline"
+        size="sm"
         isDisabled={page === maxPage}
         onClick={() => setPage(page + 1)}
-      >
-        <ArrowForwardIcon />
-      </Button>
-      <Text color="orange.500" w="100px">
-        из {maxPage}
+      />
+      <Text color="ink.muted" fontSize="sm" px={2}>
+        of {maxPage}
       </Text>
       <Select
-        w="100px"
+        w="20"
+        size="sm"
+        borderRadius="lg"
         defaultValue={limit}
         onChange={(e) => setLimit(e.target.value)}
-        colorScheme="orange"
-        color="orange"
       >
         <option value="5">5</option>
         <option value="7">7</option>
         <option value="10">10</option>
-        <option value="15">15</option>
       </Select>
     </Flex>
   );

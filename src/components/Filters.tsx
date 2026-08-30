@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Input, Select } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Input, Select } from "@chakra-ui/react";
 import { useFilters } from "../hooks/useFilters";
 import { Field } from "../types";
 import { Search2Icon } from "@chakra-ui/icons";
@@ -25,87 +25,72 @@ export default function Filters({
   const { genre, country, year, ageRating } = filters;
 
   return (
-    <Box display="flex" flexDirection="column" gap={5}>
-      <Heading color="white">Фильтры</Heading>
-      <Flex gap={5} alignItems="center" color="orange" flexWrap="wrap">
-        <Button
-          size="lg"
-          px={4}
-          colorScheme="red"
-          variant="solid"
-          onClick={resetFilters}
-        >
-          Сбросить
-        </Button>
-        <Select
-          w="300px"
-          value={genre}
-          onChange={(e) =>
-            setAllFilters({ country, genre: e.target.value, year, ageRating })
-          }
-          colorScheme="orange"
-          color="orange"
-        >
-          <option value="">Жанр</option>
-          {genres.map((genre) => (
-            <option key={genre.name} value={genre.name}>
-              {genre.name}
-            </option>
-          ))}
-        </Select>
-        <Select
-          w="300px"
-          value={country}
-          onChange={(e) =>
-            setAllFilters({ country: e.target.value, genre, year, ageRating })
-          }
-          colorScheme="orange"
-          color="orange"
-        >
-          <option value="">Страна</option>
-          {countries.map((country) => (
-            <option key={country.name} value={country.name}>
-              {country.name}
-            </option>
-          ))}
-        </Select>
-        <Select
-          w="300px"
-          value={ageRating}
-          onChange={(e) =>
-            setAllFilters({ country, genre, year, ageRating: e.target.value })
-          }
-          colorScheme="orange"
-          color="orange"
-        >
-          <option value={"0-18"}>Возрастной рейтинг</option>
-          {ratings.map((rating) => (
-            <option key={rating.value} value={rating.value}>
-              {rating.label}
-            </option>
-          ))}
-        </Select>
-        <Input
-          w="300px"
-          placeholder="Год выхода"
-          colorScheme="orange"
-          type="text"
-          value={year}
-          onChange={(e) => {
-            setAllFilters({ country, genre, year: e.target.value, ageRating });
-          }}
-        />
-        <Button
-          colorScheme="orange"
-          variant="solid"
-          size="md"
-          onClick={() => {
-            onClickSearch();
-          }}
-        >
-          <Search2Icon />
-        </Button>
-      </Flex>
-    </Box>
+    <Flex gap={3} align="center" flexWrap="wrap" w="100%">
+      <Select
+        size="sm"
+        w="44"
+        value={genre}
+        onChange={(e) =>
+          setAllFilters({ country, genre: e.target.value, year, ageRating })
+        }
+      >
+        <option value="">Genre</option>
+        {genres.map((genre) => (
+          <option key={genre.name} value={genre.name}>
+            {genre.name}
+          </option>
+        ))}
+      </Select>
+      <Select
+        size="sm"
+        w="44"
+        value={country}
+        onChange={(e) =>
+          setAllFilters({ country: e.target.value, genre, year, ageRating })
+        }
+      >
+        <option value="">Country</option>
+        {countries.map((country) => (
+          <option key={country.name} value={country.name}>
+            {country.name}
+          </option>
+        ))}
+      </Select>
+      <Select
+        size="sm"
+        w="44"
+        value={ageRating}
+        onChange={(e) =>
+          setAllFilters({ country, genre, year, ageRating: e.target.value })
+        }
+      >
+        <option value="0-18">Age rating</option>
+        {ratings.map((rating) => (
+          <option key={rating.value} value={rating.value}>
+            {rating.label}
+          </option>
+        ))}
+      </Select>
+      <Input
+        size="sm"
+        w="32"
+        borderRadius="lg"
+        placeholder="Year"
+        type="text"
+        value={year}
+        onChange={(e) =>
+          setAllFilters({ country, genre, year: e.target.value, ageRating })
+        }
+      />
+      <IconButton
+        aria-label="Search"
+        icon={<Search2Icon />}
+        size="sm"
+        onClick={onClickSearch}
+      />
+      <Button variant="ghost" size="sm" onClick={resetFilters}>
+        Reset
+      </Button>
+    </Flex>
   );
 }

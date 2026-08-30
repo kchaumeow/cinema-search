@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import {
+  AspectRatio,
   Box,
   Flex,
   Heading,
   Image,
-  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -16,8 +16,26 @@ import SeasonsList from "../components/SeasonsList";
 import { useLazyGetCinemaByIdQuery } from "../features/api/cinemasSlice";
 import { useEffect } from "react";
 import Error from "../components/Error";
+import Loader from "../components/Loader";
 
 const series = ["cartoon", "tv-series", "anime", "animated-series"];
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Flex direction="column" gap={5} align="center" w="100%">
+      <Heading size="md" alignSelf="flex-start">
+        {title}
+      </Heading>
+      {children}
+    </Flex>
+  );
+}
 
 export default function Cinema() {
   const { id } = useParams();
@@ -40,91 +58,68 @@ export default function Cinema() {
 
   if (isError) return <Error error={cinemaError} />;
 
-  if (isLoading || isFetching || cinemaError || !cinema)
-    return (
-      <Spinner
-        thickness="10px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange.500"
-        marginTop="200px"
-        w={100}
-        h={100}
-      />
-    );
+  if (isLoading || isFetching || cinemaError || !cinema) return <Loader />;
 
   return (
-    <Box
-      h="100%"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      flexDirection="column"
-    >
-      <Flex
-        px={20}
-        py={10}
-        flexDirection={{ base: "column-reverse", lg: "row" }}
-      >
-        <Stack gap={5}>
-          {cinema.logo && cinema.logo.url ? (
+    <Flex direction="column" gap={16}>
+      <Flex direction={{ base: "column", md: "row" }} gap={10}>
+        <Box w={{ base: "100%", md: "260px" }} flexShrink={0}>
+          <AspectRatio ratio={2 / 3}>
             <Image
-              fontSize="3xl"
-              color="white"
-              src={cinema.logo.url!}
+              src={cinema.poster?.url ?? undefined}
               alt={cinema.name}
-              w="50%"
-              h="200px"
+              objectFit="cover"
+              bg="ink.raised"
+              borderRadius="xl"
+            />
+          </AspectRatio>
+        </Box>
+        <Stack spacing={4} pt={2}>
+          {cinema.logo?.url ? (
+            <Image
+              src={cinema.logo.url}
+              alt={cinema.name}
+              maxW="280px"
+              h="80px"
               objectFit="contain"
+              objectPosition="left"
             />
           ) : (
-            <Heading color="white" fontWeight="bold">
-              {cinema.name}
-            </Heading>
+            <Heading size="xl">{cinema.name}</Heading>
           )}
-          <Text color="orange.500" fontWeight="700" fontSize="xl">
-            KP: {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
-          </Text>
-          <Text color="white" pr="3rem" fontSize="lg" align="justify">
+          <Flex gap={2} align="baseline" fontSize="sm">
+            <Text color="ink.muted">KP</Text>
+            <Text color="brand.300" fontWeight={600} fontSize="md">
+              {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
+            </Text>
+          </Flex>
+          <Text color="ink.text" fontSize="sm" lineHeight="tall" maxW="65ch">
             {cinema.description}
           </Text>
         </Stack>
-        <Box
-          h={{ base: "400px", lg: "500px" }}
-          w={{ base: "100%", lg: "sm" }}
-          flexShrink={0}
-        >
-          <Image
-            mx="auto"
-            maxH="100%"
-            src={cinema.poster?.url ?? undefined}
-            alt={cinema.name}
-          />
-        </Box>
       </Flex>
 
-      <Heading size="2xl" color="orange.500" pb={5}>
-        Постеры
-      </Heading>
-      <Posters id={cinema.id.toString()} />
+      <Section title="Posters">
+        <Posters id={cinema.id.toString()} />
+      </Section>
 
-      <Heading size="2xl" color="orange.500" pb={5} pt={100}>
-        Актеры
-      </Heading>
-      <ActorsList actors={cinema.persons} />
+      <Section title="Cast">
+        <ActorsList actors={cinema.persons} />
+      </Section>
 
-      <CinemaSlider cinemas={cinema.similarMovies} />
+      <Section title="Similar titles">
+        <CinemaSlider cinemas={cinema.similarMovies} />
+      </Section>
 
-      <ReviewList id={id!} />
+      <Section title="Reviews">
+        <ReviewList id={id!} />
+      </Section>
 
       {series.includes(cinema.type) && (
-        <>
-          <Heading size="2xl" color="orange.500" pb={5}>
-            Сезоны и серии
-          </Heading>
+        <Section title="Seasons and episodes">
           <SeasonsList movieId={id!} />
-        </>
+        </Section>
       )}
-    </Box>
+    </Flex>
   );
 }

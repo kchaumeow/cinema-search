@@ -1,60 +1,44 @@
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Divider,
-  Heading,
-  Image,
-  Text,
-} from "@chakra-ui/react";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { AspectRatio, Box, Grid, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { SimilarMovie } from "../types";
+import EmptyState from "./EmptyState";
 
 export default function CinemaSlider({ cinemas }: { cinemas: SimilarMovie[] }) {
-  if (!cinemas.length)
-    return (
-      <Heading color="orange.500" mt={200}>
-        Нет похожих фильмов/сериалов
-      </Heading>
-    );
+  if (!cinemas.length) return <EmptyState>No similar titles</EmptyState>;
   return (
-    <>
-      <Heading color="orange.500" mt={20} pb={10}>
-        Похожие фильмы
-      </Heading>
-      <Splide
-        aria-label="My Favorite Images"
-        options={{
-          perPage: 1,
-          rewind: true,
-          width: 400,
-          gap: "3rem",
-        }}
-      >
-        {cinemas.map((cinema) => (
-          <SplideSlide key={cinema.id}>
-            <Link to={`/cinemas/${cinema.id}`}>
-              <Card bg="#141414" maxW="sm" h={700}>
-                <CardBody>
-                  <Image
-                    src={cinema.poster?.url ?? undefined}
-                    alt={cinema.name}
-                    borderRadius="lg"
-                    objectFit="contain"
-                  />
-                </CardBody>
-                <Divider borderColor={"orange"} />
-                <CardFooter>
-                  <Text color="white" as="b" fontSize="2xl" noOfLines={1} p={2}>
-                    {cinema.name}
-                  </Text>
-                </CardFooter>
-              </Card>
-            </Link>
-          </SplideSlide>
-        ))}
-      </Splide>
-    </>
+    <Grid
+      templateColumns="repeat(auto-fill, minmax(160px, 1fr))"
+      gap={4}
+      w="100%"
+    >
+      {cinemas.map((cinema) => (
+        <Link key={cinema.id} to={`/cinemas/${cinema.id}`}>
+          <Box
+            bg="ink.surface"
+            borderWidth="1px"
+            borderColor="ink.border"
+            borderRadius="xl"
+            overflow="hidden"
+            transition="border-color .2s ease, transform .2s ease"
+            _hover={{
+              borderColor: "ink.borderHover",
+              transform: "translateY(-4px)",
+            }}
+          >
+            <AspectRatio ratio={2 / 3}>
+              <Image
+                src={cinema.poster?.url ?? undefined}
+                alt={cinema.name}
+                objectFit="cover"
+                bg="ink.raised"
+              />
+            </AspectRatio>
+            <Text fontSize="sm" fontWeight={500} noOfLines={1} px={3} py={2.5}>
+              {cinema.name}
+            </Text>
+          </Box>
+        </Link>
+      ))}
+    </Grid>
   );
 }

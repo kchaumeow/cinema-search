@@ -1,9 +1,10 @@
-import { Box, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import Filters from "../components/Filters";
 import { useFilters } from "../hooks/useFilters";
 import { useEffect, useRef } from "react";
 import { useGenresAndCountries } from "../hooks/useGenresAndCountries";
 import Error from "../components/Error";
+import Loader from "../components/Loader";
 import { useLazyGetRandomCinemaQuery } from "../features/api/cinemasSlice";
 import CinemaCard from "../components/CinemaCard";
 import { QueryActionCreatorResult } from "@reduxjs/toolkit/query";
@@ -35,26 +36,10 @@ export default function Random() {
     isFetching ||
     isLoading
   )
-    return (
-      <Spinner
-        thickness="10px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange.500"
-        marginTop="200px"
-        w={100}
-        h={100}
-      />
-    );
+    return <Loader />;
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={20}
-    >
-      <Heading color="orange.500">Случайный фильм</Heading>
+    <Flex direction="column" gap={8}>
+      <Heading size="lg">Random title</Heading>
       {resultGenres.isSuccess && resultCountries.isSuccess && (
         <Filters
           genres={resultGenres.data}
@@ -62,7 +47,9 @@ export default function Random() {
           onClickSearch={searchRandomCinema}
         />
       )}
-      <CinemaCard cinema={cinema} />
-    </Box>
+      <Box w="220px">
+        <CinemaCard cinema={cinema} />
+      </Box>
+    </Flex>
   );
 }

@@ -1,23 +1,20 @@
 import {
-  Box,
-  Button,
   Flex,
-  Heading,
   Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { usePagination } from "../hooks/usePagination";
 import CinemaList from "./CinemaList";
 import Pagination from "./Pagination";
+import EmptyState from "./EmptyState";
+import Loader from "./Loader";
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../features/store";
@@ -51,97 +48,70 @@ export default function SearchModal() {
   const searchHistory = useSelector(selectHistory);
   return (
     <>
-      <Input onClick={onOpen} placeholder="Искать по названию" w="500px" />
+      <Input
+        onClick={onOpen}
+        placeholder="Search by title"
+        w={{ base: "100%", md: "80" }}
+        size="sm"
+        borderRadius="lg"
+        readOnly
+        cursor="pointer"
+      />
 
       <Modal
         finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={onClose}
-        size="7xl"
+        size="6xl"
+        scrollBehavior="inside"
       >
         <ModalOverlay />
-        <ModalContent bgColor="#323230" maxW="2000px">
-          <ModalHeader>
-            <Heading color="orange.500">Поиск фильма по названию</Heading>
+        <ModalContent>
+          <ModalHeader fontSize="lg" fontWeight={600}>
+            Search
           </ModalHeader>
-          <ModalCloseButton color="orange.500" />
-          <ModalBody>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="column"
-            >
-              <AutoComplete rollNavigation>
-                <AutoCompleteInput
-                  variant="filled"
-                  colorScheme="orange"
-                  color="orange.500"
-                  focusBorderColor="orange.500"
-                  placeholder="Искать по названию"
-                  autoFocus
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-                <AutoCompleteList bgColor="#141414">
-                  {searchHistory.map((item, index) => (
-                    <AutoCompleteItem
-                      key={index}
-                      value={item}
-                      label={item}
-                      bgColor="#141414"
-                      color="orange.500"
-                    >
-                      {item}
-                    </AutoCompleteItem>
-                  ))}
-                </AutoCompleteList>
-              </AutoComplete>
-            </Box>
-            <Box
-              mt={10}
-              justifyContent="center"
-              display="flex"
-              flexDirection="column"
-            >
+          <ModalCloseButton />
+          <ModalBody pb={8}>
+            <AutoComplete rollNavigation>
+              <AutoCompleteInput
+                placeholder="Search by title"
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <AutoCompleteList bg="ink.raised" borderColor="ink.border">
+                {searchHistory.map((item, index) => (
+                  <AutoCompleteItem
+                    key={index}
+                    value={item}
+                    label={item}
+                    color="ink.text"
+                  >
+                    {item}
+                  </AutoCompleteItem>
+                ))}
+              </AutoCompleteList>
+            </AutoComplete>
+
+            <Flex direction="column" gap={8} mt={8}>
               {!query ? (
-                <Heading color="orange.500" textAlign="center">
-                  Начните вводить название фильма
-                </Heading>
+                <EmptyState>Start typing a film title</EmptyState>
+              ) : isLoading || isFetching || !cinemas ? (
+                <Loader />
               ) : (
                 <>
-                  {isLoading || isFetching || !cinemas ? (
-                    <Spinner
-                      thickness="10px"
-                      speed="0.65s"
-                      emptyColor="gray.200"
-                      color="orange.500"
-                      marginTop="200px"
-                      w={100}
-                      h={100}
-                    />
-                  ) : (
-                    <Flex flexDirection="column" gap={20} alignItems="center">
-                      <CinemaList cinemas={cinemas.docs} />
-
-                      <Pagination
-                        page={page}
-                        limit={limit}
-                        setPage={setPage}
-                        setLimit={setLimit}
-                        maxPage={cinemas.pages}
-                      />
-                    </Flex>
-                  )}
+                  <CinemaList cinemas={cinemas.docs} />
+                  <Pagination
+                    page={page}
+                    limit={limit}
+                    setPage={setPage}
+                    setLimit={setLimit}
+                    maxPage={cinemas.pages}
+                  />
                 </>
               )}
-            </Box>
+            </Flex>
           </ModalBody>
-          <ModalFooter>
-            <Button mr={3} onClick={onClose} colorScheme="red">
-              Закрыть
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

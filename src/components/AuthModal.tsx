@@ -1,27 +1,23 @@
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/userSlice";
 
-export default function () {
+export default function AuthModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const navigate = useNavigate();
   const [userData, setUserData] = useState<{
     username?: string;
     password?: string;
@@ -29,18 +25,18 @@ export default function () {
   const dispatch = useDispatch();
   return (
     <>
-      <Button onClick={onOpen} colorScheme="orange" size="lg">
-        Войти
+      <Button onClick={onOpen} size="sm">
+        Log in
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
-        <ModalContent bgColor="#323230">
-          <ModalHeader>
-            <Heading color="orange.500">Вход в систему</Heading>
+        <ModalContent>
+          <ModalHeader fontSize="lg" fontWeight={600}>
+            Sign in
           </ModalHeader>
-          <ModalCloseButton color="orange.500" />
-          <ModalBody>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -48,13 +44,12 @@ export default function () {
                 onClose();
               }}
             >
-              <Flex alignItems="center" flexDirection="column">
+              <Stack spacing={4}>
                 <FormControl isRequired>
-                  <FormLabel color="orange.500">Имя пользователя</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <Input
-                    color="orange.500"
                     type="text"
-                    placeholder="Напишите ваше имя пользователя..."
+                    placeholder="Your username"
                     onChange={(e) =>
                       setUserData((prev) => ({
                         ...prev,
@@ -64,11 +59,10 @@ export default function () {
                   />
                 </FormControl>
                 <FormControl isRequired>
-                  <FormLabel color="orange.500">Ваш пароль</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <Input
-                    color="orange.500"
                     type="password"
-                    placeholder="Ваш пароль в системе..."
+                    placeholder="Your password"
                     onChange={(e) =>
                       setUserData((prev) => ({
                         ...prev,
@@ -77,17 +71,12 @@ export default function () {
                     }
                   />
                 </FormControl>
-                <Button type="submit" colorScheme="orange" m={4} color="black">
-                  Авторизоваться
+                <Button type="submit" mt={2}>
+                  Sign in
                 </Button>
-              </Flex>
+              </Stack>
             </form>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={onClose}>
-              Закрыть
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

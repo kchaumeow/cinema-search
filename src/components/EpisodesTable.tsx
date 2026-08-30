@@ -1,7 +1,7 @@
 import { Episode } from "../types";
 import {
+  Box,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -12,36 +12,43 @@ import {
 
 export default function EpisodesTable({ episodes }: { episodes: Episode[] }) {
   return (
-    <TableContainer w="80%" bgColor="#141414" p={5} borderRadius="lg" m={10}>
-      <Table variant="simple" size="lg" colorScheme="red">
-        <TableCaption color="white">Эпизоды</TableCaption>
-        <Thead>
-          <Tr>
-            <Th color="white">Номер</Th>
-            <Th color="white">Название</Th>
-            <Th color="white">Дата выхода</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {episodes.map((episode) => (
+    <Box
+      w="100%"
+      maxW="800px"
+      bg="ink.surface"
+      borderWidth="1px"
+      borderColor="ink.border"
+      borderRadius="xl"
+      overflow="hidden"
+    >
+      <TableContainer>
+        <Table variant="simple" size="sm">
+          <Thead>
             <Tr>
-              <Td color="white">{episode.number}</Td>
-              <Td color="white" whiteSpace="normal">
-                {episode.description || "-"}
-              </Td>
-              <Td color="white">
-                {episode.airDate
-                  ? new Date(episode.airDate).toLocaleString("ru", {
-                      month: "2-digit",
-                      day: "2-digit",
-                      year: "2-digit",
-                    })
-                  : "-"}
-              </Td>
+              <Th w="16">No.</Th>
+              <Th>Title</Th>
+              <Th w="32">Air date</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+          </Thead>
+          <Tbody>
+            {episodes.map((episode) => (
+              <Tr key={episode.number}>
+                <Td color="ink.muted">{episode.number}</Td>
+                <Td whiteSpace="normal">{episode.description || "—"}</Td>
+                <Td color="ink.muted">
+                  {episode.airDate
+                    ? new Date(episode.airDate).toLocaleDateString("en-GB", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : "—"}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 }

@@ -1,25 +1,27 @@
 import { Season } from "../types";
 import { useState } from "react";
-import { Box, Flex, Select, Text } from "@chakra-ui/react";
+import { Flex, Select, Text } from "@chakra-ui/react";
 import EpisodesTable from "./EpisodesTable";
 
 export default function Seasons({ list }: { list: Season[] }) {
   const [season, setSeason] = useState<number>(list[0].number);
   return (
-    <Box display="flex" alignItems="center" flexDirection="column">
-      <Flex gap={5} w="100%" alignItems="center" justifyContent="center">
-        <Text color="orange.500" fontSize="xl">
-          Сезон
+    <Flex direction="column" align="center" gap={5} w="100%">
+      <Flex gap={3} align="center">
+        <Text color="ink.muted" fontSize="sm">
+          Season
         </Text>
         <Select
+          size="sm"
+          w="20"
+          borderRadius="lg"
           value={season}
-          color="orange"
-          colorScheme="orange"
           onChange={(e) => setSeason(+e.target.value)}
-          w="100px"
         >
           {list.map((season) => (
-            <option value={season.number}>{season.number}</option>
+            <option key={season.number} value={season.number}>
+              {season.number}
+            </option>
           ))}
         </Select>
       </Flex>
@@ -27,6 +29,6 @@ export default function Seasons({ list }: { list: Season[] }) {
       <EpisodesTable
         episodes={list.find((obj) => obj.number === season)!.episodes}
       />
-    </Box>
+    </Flex>
   );
 }
