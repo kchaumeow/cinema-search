@@ -33,7 +33,8 @@ export default function Home() {
   useEffect(() => {
     searchRandomCinema();
     return () => currReq.current?.abort();
-  }, []);
+    // Filters are applied by the search button, so they stay out of the deps.
+  }, [page, limit]);
   const { resultGenres, resultCountries } = useGenresAndCountries();
   if (isError) return <Error error={cinemaError} />;
   if (

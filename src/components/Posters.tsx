@@ -33,7 +33,7 @@ export default function Posters({ id }: { id: string }) {
   useEffect(() => {
     const request = trigger(id);
     return () => request.abort();
-  }, []);
+  }, [id]);
 
   if (isLoading || isFetching || !posters) return <Loader />;
 

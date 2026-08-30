@@ -21,7 +21,7 @@ export default function SeasonsList({ movieId }: { movieId: string }) {
   useEffect(() => {
     const request = trigger({ movieId: movieId });
     return () => request.abort();
-  }, []);
+  }, [movieId]);
 
   if (isError) return <Error error={seasonsError} />;
 

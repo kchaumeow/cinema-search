@@ -25,7 +25,7 @@ export default function ReviewList({ id }: { id: string }) {
   useEffect(() => {
     const request = trigger({ movieId: id, page, limit });
     return () => request.abort();
-  }, []);
+  }, [id, page, limit]);
 
   if (reviewsError) return <Error error={error} />;
 

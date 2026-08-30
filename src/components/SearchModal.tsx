@@ -44,7 +44,7 @@ export default function SearchModal() {
     dispatch(add(debouncedQuery));
     const request = trigger({ page, limit, query: debouncedQuery });
     return () => request.abort();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, page, limit]);
   const searchHistory = useSelector(selectHistory);
   return (
     <>
