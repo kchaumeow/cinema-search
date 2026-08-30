@@ -4,10 +4,18 @@ A film and series catalogue built on [The Movie Database](https://developer.them
 
 ## Getting an API token
 
-Create a free TMDB account, open **Settings → API**, and copy the
-**API Read Access Token** (the long JWT, not the shorter v3 API key). Pass it
-to every command below as the `TOKEN` environment variable — the app sends it
-as `Authorization: Bearer <token>`.
+Create a free TMDB account and open **Settings → API**. That page hands out two
+credentials and either one works — pass it to every command below as the
+`TOKEN` environment variable:
+
+- **API Key (v3 auth)** — the short hex string. Sent as an `api_key` query
+  parameter.
+- **API Read Access Token** — the long JWT starting with `eyJ`. Sent as an
+  `Authorization: Bearer` header.
+
+The app tells them apart by shape, so you do not have to say which is which.
+Note that TMDB answers with the same "Invalid API key" message whether the
+credential is wrong or missing entirely.
 
 The free tier has no daily request cap; the only limit is roughly 50 requests
 per second per IP address.

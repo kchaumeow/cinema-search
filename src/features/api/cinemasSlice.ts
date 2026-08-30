@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import {
   Cinema,
   CinemaDetails,
@@ -73,26 +75,29 @@ const certifications: Record<string, string> = {
   "0": "G",
 };
 
-function discoverParams(mediaType: MediaType, page: number, filters: Filters) {
-  const params = new URLSearchParams({
+function discoverParams(
+  mediaType: MediaType,
+  page: number,
+  filters: Filters,
+): Record<string, string> {
+  const params: Record<string, string> = {
     include_adult: "false",
     language: "en-US",
     page: String(page),
     sort_by: "popularity.desc",
-  });
-  if (filters.genre) params.set("with_genres", filters.genre);
-  if (filters.country) params.set("with_origin_country", filters.country);
+  };
+  if (filters.genre) params.with_genres = filters.genre;
+  if (filters.country) params.with_origin_country = filters.country;
   if (filters.year) {
-    params.set(
-      mediaType === "movie" ? "primary_release_year" : "first_air_date_year",
-      filters.year,
-    );
+    const key =
+      mediaType === "movie" ? "primary_release_year" : "first_air_date_year";
+    params[key] = filters.year;
   }
   if (filters.ageRating && mediaType === "movie") {
     const certification = certifications[filters.ageRating];
     if (certification) {
-      params.set("certification_country", "US");
-      params.set("certification", certification);
+      params.certification_country = "US";
+      params.certification = certification;
     }
   }
   return params;
@@ -114,14 +119,37 @@ type TmdbDetails = TmdbListItem & {
   similar: TmdbPage;
 };
 
+// TMDB hands out two credentials on the same settings page: a v3 API key,
+// which travels as an api_key query parameter, and a v4 read access token,
+// which is a JWT and travels as a bearer header. Either one is accepted here,
+// told apart by the JWT's three dot-separated segments.
+const token = process.env.TOKEN;
+const isReadAccessToken = token.split(".").length === 3;
+
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: "https://api.themoviedb.org/3",
+  prepareHeaders: (headers) => {
+    if (isReadAccessToken) headers.set("Authorization", `Bearer ${token}`);
+    return headers;
+  },
+});
+
+const baseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = (args, api, extraOptions) => {
+  if (isReadAccessToken) return rawBaseQuery(args, api, extraOptions);
+  const fetchArgs = typeof args === "string" ? { url: args } : args;
+  return rawBaseQuery(
+    { ...fetchArgs, params: { ...fetchArgs.params, api_key: token } },
+    api,
+    extraOptions,
+  );
+};
+
 export const cinemasApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.themoviedb.org/3",
-    prepareHeaders: (headers) => {
-      headers.set("Authorization", `Bearer ${process.env.TOKEN}`);
-      return headers;
-    },
-  }),
+  baseQuery,
   // A film page is revisited constantly while browsing; a ten minute cache
   // keeps that from costing a request every time.
   keepUnusedDataFor: 600,
