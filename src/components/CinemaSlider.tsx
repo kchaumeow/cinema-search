@@ -38,7 +38,7 @@ export default function CinemaSlider({ cinemas }: { cinemas: SimilarMovie[] }) {
               <Card bg="#141414" maxW="sm" h={700}>
                 <CardBody>
                   <Image
-                    src={cinema.poster.url}
+                    src={cinema.poster?.url ?? undefined}
                     alt={cinema.name}
                     borderRadius="lg"
                     objectFit="contain"

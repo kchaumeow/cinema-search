@@ -1,17 +1,17 @@
 export interface Cinema {
   name: string;
   id: number;
-  rating: {
-    kp: number;
-    imdb: number;
-    filmCritics: number;
-    russianFilmCritics: number;
+  rating?: {
+    kp: number | null;
+    imdb: number | null;
+    filmCritics: number | null;
+    russianFilmCritics: number | null;
   };
-  poster: {
-    url: string;
-    previewUrl: string;
+  poster?: {
+    url: string | null;
+    previewUrl: string | null;
   };
-  logo: {
+  logo?: {
     url: string | null;
   };
 }

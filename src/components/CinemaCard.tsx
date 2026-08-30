@@ -23,7 +23,7 @@ export default function CinemaCard({ cinema }: { cinema: Cinema }) {
       >
         <CardBody h={573} w={384}>
           <Image
-            src={cinema.poster.url}
+            src={cinema.poster?.url ?? undefined}
             alt={cinema.name}
             borderRadius="lg"
             objectFit="contain"
@@ -36,7 +36,7 @@ export default function CinemaCard({ cinema }: { cinema: Cinema }) {
             {cinema.name}
           </Text>
           <Text color="orange.400" as="b" fontSize="2xl" p={2}>
-            {cinema.rating.kp.toFixed(1)}
+            {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
           </Text>
         </CardFooter>
       </Card>

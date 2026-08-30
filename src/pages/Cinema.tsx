@@ -83,7 +83,7 @@ export default function Cinema() {
             </Heading>
           )}
           <Text color="orange.500" fontWeight="700" fontSize="xl">
-            KP: {cinema.rating.kp.toFixed(1)}
+            KP: {cinema.rating?.kp ? cinema.rating.kp.toFixed(1) : "—"}
           </Text>
           <Text color="white" pr="3rem" fontSize="lg" align="justify">
             {cinema.description}
@@ -97,7 +97,7 @@ export default function Cinema() {
           <Image
             mx="auto"
             maxH="100%"
-            src={cinema.poster.url}
+            src={cinema.poster?.url ?? undefined}
             alt={cinema.name}
           />
         </Box>
