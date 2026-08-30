@@ -51,7 +51,7 @@ type RandomArgs = {
 
 export const cinemasApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.kinopoisk.dev",
+    baseUrl: "https://api.poiskkino.dev",
     credentials: "same-origin",
     prepareHeaders: (headers) => {
       headers.set("X-API-KEY", process.env.TOKEN);
