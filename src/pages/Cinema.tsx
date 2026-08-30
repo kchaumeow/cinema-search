@@ -54,7 +54,7 @@ export default function Cinema() {
   useEffect(() => {
     const request = trigger(id!);
     return () => request.abort();
-  }, []);
+  }, [id]);
 
   if (isError) return <Error error={cinemaError} />;
 
@@ -104,18 +104,18 @@ export default function Cinema() {
       </Section>
 
       <Section title="Cast">
-        <ActorsList actors={cinema.persons} />
+        <ActorsList actors={cinema.persons ?? []} />
       </Section>
 
       <Section title="Similar titles">
-        <CinemaSlider cinemas={cinema.similarMovies} />
+        <CinemaSlider cinemas={cinema.similarMovies ?? []} />
       </Section>
 
       <Section title="Reviews">
         <ReviewList id={id!} />
       </Section>
 
-      {series.includes(cinema.type) && (
+      {!!cinema.type && series.includes(cinema.type) && (
         <Section title="Seasons and episodes">
           <SeasonsList movieId={id!} />
         </Section>

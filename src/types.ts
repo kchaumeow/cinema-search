@@ -17,15 +17,15 @@ export interface Cinema {
 }
 
 export interface CinemaDetails extends Cinema {
-  type: string;
+  type?: string;
   description: string | null;
-  year: number;
-  genres: {
+  year?: number;
+  genres?: {
     name: string;
   }[];
-  persons: Person[];
+  persons?: Person[];
   networks: null | [];
-  similarMovies: SimilarMovie[];
+  similarMovies?: SimilarMovie[];
 }
 
 export type Person = {
